@@ -1,35 +1,27 @@
 #!usr/bin/python
 from datastuff import *
 
-def extract_filename(file):
-  return "test-filename"
-
-def get_size(file):
-  return 1024
 
 # file is a bytes array
-def upload_req(file):
-  filename = extract_filename(file)
-  size = get_size(file)
+def upload_req(file, filename, size):
+  start_chunk, start_offset = get_last_used_chunk_and_offset()
 
-  start_chunk, start_offset = get_last_used_chunk_and_offset() 
-  # we (over)write the first chunk and decrease the remaining size
-  size = size - (CHUNK_SIZE - start_offset)
   if start_offset == CHUNK_SIZE:
     start_chunk = start_chunk + 1
     # reset the starting offset for the next chunk
     start_offset = DEFAULT
 
-  chunks, chunk_IDs = split(start_offset, get_size(file), file)
-  end_offset = "bla"
+  chunks, chunk_IDs, end_offset = split(start_chunk, start_offset, size, file)
+
   add_file_to_filelist(filename, chunk_IDs, start_offset, end_offset)
 
   # store ranges
   for i in xrange(len(chunk_IDs) - 1):
   	set_chunk_offset(chunk_IDs[i], CHUNK_SIZE)
+
   #last chunk
   set_chunk_offset(chunk_IDs[len(chunk_IDs) - 1], size % CHUNK_SIZE)
-  
+
   print chunks
   #return upload_storage(chunks, filename)
 
@@ -59,27 +51,46 @@ def list_storage(userID):
 # returns:
 # 1. the list of data chunks
 # 2. the list of associated chunk IDs
-def split(start_offset, size, file):
-  # for testing:
-  chunks = ["00", "01", "02"]
-  chunk_IDs = [0, 1, 2]
-
+def split(start_chunk, start_offset, size, file):
   # TODO check if file fits in one chunk only
-  offset = 0#"blaoffset"#get_curr_offset()
-  initial_chunk, start_offset = req_chunk()
+  offset = 0
+  end_offset = 0
+  chunk_number = start_chunk
 
-  initial_chunk = chunks[0]
+  chunk_list = []
+  chunk_IDs = []
 
-  # returneaza unde a ramas in fisier
-  # ret -1 daca a terminat
-  initial_chunk, file_offset = fill_initial_chunk(
-  	initial_chunk, file)
+  if start_offset > 0:
+    initial_chunk, start_offset = req_chunk(start_chunk)
 
-  chunks.append(initial_chunk)
+    if size < CHUNK_SIZE - start_offset:
+      end_offset = CHUNK_SIZE - start_offset - size + 1
+    else:
+      end_offset = CHUNK_SIZE
 
-  # append all other chunks
+    initial_chunk[start_offset:] = file[0 : (CHUNK_SIZE - start_offset)]
+    size = size - (CHUNK_SIZE - start_offset)
+    offset = CHUNK_SIZE - start_offset
+    chunk_list.append(initial_chunk)
+    chunk_IDs.append(chunk_number)
 
-  return chunks, chunk_IDs
+  while size > 0:
+    if size < CHUNK_OFFSET:
+      new_chunk = file[offset:]
+      # TODO: check if it needs a -1 or +1
+      end_offset = size
+    else:
+      new_chunk = file[offset : offset + CHUNK_SIZE]
+      offset = offset + CHUNK_SIZE
+      end_offset = CHUNK_SIZE
+
+    size = max(0, size - CHUNK_SIZE)
+    chunk_number = chunk_number + 1
+
+    chunk_IDs.append(chunk_number)
+    chunk_list.append(new_chunk)
+
+  return chunks, chunk_IDs, end_offset
 
 # makes request to storage backend for the chunk last chunk that is
 # available for writing

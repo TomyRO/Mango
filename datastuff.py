@@ -3,6 +3,7 @@
 from collections import OrderedDict
 
 DEFAULT = 0
+
 # Size of a chunk in bytes
 CHUNK_SIZE = 10000
 
@@ -38,7 +39,7 @@ def get_last_used_chunk_and_offset():
     last_item = filelist[filelist.keys()[-1]]
     return last_item['chunks'][-1], last_item['end']
 
-  return DEFAULT, DEFAULT
+  return 0, DEFAULT
 
 def get_chunk_index():
     return chunk_index
