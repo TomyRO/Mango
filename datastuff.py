@@ -1,6 +1,8 @@
 #!usr/bin/python
 
 DEFAULT = 0
+# Size of a chunk in bytes
+CHUNK_SIZE = 10000
 
 # contine:
 #   - chunk number de forma 00, 01, etc
