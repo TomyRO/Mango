@@ -1,5 +1,7 @@
 #!usr/bin/python
 
+import datastuff as d
+
 # primit de la aplicatie
 def upload_req(file):
   filename = extract_filename(file)
@@ -29,10 +31,11 @@ def upload_storage(chunks, filename):
 
 # request lui tomi
 def list_storage(userID):
-  # din tabel local
-  return get_file_names()
+  filelist = d.get_file_list()
 
-# 
+  return filelist.keys()
+
+#
 def split(start_offset, size, file):
   chunks = []
 
@@ -46,7 +49,6 @@ def split(start_offset, size, file):
 
   chunks.append(initial_chunk)
 
-  # append all other chunks 
+  # append all other chunks
 
   return chunks
-
