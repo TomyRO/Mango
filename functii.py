@@ -13,6 +13,12 @@ def upload_req(file):
   chunks, chunk_IDs = split(start, get_size(file), file)
   add_file_to_filelist(filename, chunk_IDs, start, end)
 
+  # store ranges
+  for i in xrange(len(chunk_IDs) - 1):
+  	set_chunk_offset(chunk_IDs[i], CHUNK_SIZE)
+  #last chunk
+  set_chunk_offset(chunk_IDs[-1], size % CHUNK_SIZE)
+
   return upload_storage(chunks, filename)
 
 # primit de la frontend
@@ -37,8 +43,12 @@ def list_storage(userID):
 
 # write the file to a list of chunks
 # start chunk is requested and overwritten from the last file's offset
+# returns:
+# 1. the list of data chunks
+# 2. the list of associated chunk IDs
 def split(start_offset, size, file):
   chunks = []
+  chunk_IDs = []
 
   # check if file fits in one chunk only
   offset = get_curr_offset()
@@ -52,5 +62,5 @@ def split(start_offset, size, file):
 
   # append all other chunks 
 
-  return chunks
+  return chunks, chunk_IDs
 
