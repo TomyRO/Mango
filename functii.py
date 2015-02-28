@@ -1,25 +1,31 @@
 #!usr/bin/python
-import datastuff
+from datastuff import *
 
+def extract_filename(file):
+  return "test-filename"
+
+def get_size(file):
+  return 1024
 
 # primit de la frontend
 def upload_req(file):
   filename = extract_filename(file)
   size = get_size(file)
 
-  start_slice, start = get_curr_offset()
-  end = start + size
+  start_chunk, start_offset = get_last_used_chunk_and_offset() 
 
-  chunks, chunk_IDs = split(start, get_size(file), file)
-  add_file_to_filelist(filename, chunk_IDs, start, end)
+  chunks, chunk_IDs = split(start_offset, get_size(file), file)
+  end_offset = "bla"
+  add_file_to_filelist(filename, chunk_IDs, start_offset, end)
 
   # store ranges
   for i in xrange(len(chunk_IDs) - 1):
   	set_chunk_offset(chunk_IDs[i], CHUNK_SIZE)
   #last chunk
-  set_chunk_offset(chunk_IDs[-1], size % CHUNK_SIZE)
-
-  return upload_storage(chunks, filename)
+  set_chunk_offset(chunk_IDs[len(chunk_IDs) - 1], size % CHUNK_SIZE)
+  
+  print chunks
+  #return upload_storage(chunks, filename)
 
 # primit de la frontend
 def download_req(filename):
@@ -47,12 +53,15 @@ def list_storage(userID):
 # 1. the list of data chunks
 # 2. the list of associated chunk IDs
 def split(start_offset, size, file):
-  chunks = []
-  chunk_IDs = []
+  # for testing:
+  chunks = ["00", "01", "02"]
+  chunk_IDs = [0, 1, 2]
 
-  # check if file fits in one chunk only
-  offset = get_curr_offset()
-  initial_chunk = req_chunk(offset)
+  # TODO check if file fits in one chunk only
+  offset = "blaoffset"#get_curr_offset()
+  initial_chunk, start_offset = req_chunk()
+
+  initial_chunk = chunks[0]
 
   # returneaza unde a ramas in fisier
   # ret -1 daca a terminat
@@ -64,3 +73,8 @@ def split(start_offset, size, file):
 
   return chunks, chunk_IDs
 
+# makes request to storage backend for the chunk last chunk that is
+# available for writing
+# also returns the offset where we can start writing in that chunk
+def req_chunk():
+  return "blablafiletext"
