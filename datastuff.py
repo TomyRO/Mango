@@ -30,5 +30,8 @@ def populate_chunk_index(chunk_numbers):
   for i in range(chunk_numbers):
     chunk_index[i] = DEFAULT
 
-def set_chunk_offsite(chunk_number, offset):
+def set_chunk_offset(chunk_number, offset):
     chunk_index[chunk_number] = offset
+
+def get_chunk_offset(chunk_number):
+    return chunk_index[chunk_number]
