@@ -7,15 +7,22 @@ def extract_filename(file):
 def get_size(file):
   return 1024
 
+# file is a bytes array
 def upload_req(file):
   filename = extract_filename(file)
   size = get_size(file)
 
   start_chunk, start_offset = get_last_used_chunk_and_offset() 
+  # we (over)write the first chunk and decrease the remaining size
+  size = size - (CHUNK_SIZE - start_offset)
+  if start_offset == CHUNK_SIZE:
+    start_chunk = start_chunk + 1
+    # reset the starting offset for the next chunk
+    start_offset = DEFAULT
 
   chunks, chunk_IDs = split(start_offset, get_size(file), file)
   end_offset = "bla"
-  add_file_to_filelist(filename, chunk_IDs, start_offset, end)
+  add_file_to_filelist(filename, chunk_IDs, start_offset, end_offset)
 
   # store ranges
   for i in xrange(len(chunk_IDs) - 1):
@@ -58,14 +65,15 @@ def split(start_offset, size, file):
   chunk_IDs = [0, 1, 2]
 
   # TODO check if file fits in one chunk only
-  offset = "blaoffset"#get_curr_offset()
+  offset = 0#"blaoffset"#get_curr_offset()
   initial_chunk, start_offset = req_chunk()
 
   initial_chunk = chunks[0]
 
   # returneaza unde a ramas in fisier
   # ret -1 daca a terminat
-  file_offset = fill_initial_chunk(initial_chunk, file)
+  initial_chunk, file_offset = fill_initial_chunk(
+  	initial_chunk, file)
 
   chunks.append(initial_chunk)
 
@@ -76,5 +84,15 @@ def split(start_offset, size, file):
 # makes request to storage backend for the chunk last chunk that is
 # available for writing
 # also returns the offset where we can start writing in that chunk
+# TODO implementation
 def req_chunk():
-  return "blablafiletext"
+  return "blablafiletext", 0
+
+# fills remaining empty space in a chunk with the beginning of the
+# given file
+# returns the offset where it finished filling the chunk.
+# this offset is not CHUNK_SIZE only when the entire file fits in
+# the remaining empty space in the given chunk
+# TODO implementation
+def fill_initial_chunk(initial_chunk, file):
+  return initial_chunk, CHUNK_SIZE
