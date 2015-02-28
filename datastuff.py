@@ -18,6 +18,9 @@ chunk_index = {}
 #   - end offset din ultimul chunk
 filelist = OrderedDict()
 
+def get_file_list():
+    return filelist
+
 def add_file_to_filelist(fileID, chunks, start, end):
   filelist[fileID] = {'chunks': chunks, 'start': start, 'end': end}
 
@@ -31,9 +34,14 @@ def get_file_end_offset(fileID):
   return filelist[fileID]['end']
 
 def get_last_used_chunk_and_offset():
-  last_item = filelist[filelist.keys()[-1]]
+  if len(filelist.keys()) > 0:
+    last_item = filelist[filelist.keys()[-1]]
+    return last_item['chunks'][-1], last_item['end']
 
-  return last_item['chunks'][-1], last_item['end']
+  return DEFAULT, DEFAULT
+
+def get_chunk_index():
+    return chunk_index
 
 def populate_chunk_index(chunk_numbers):
   for i in range(chunk_numbers):

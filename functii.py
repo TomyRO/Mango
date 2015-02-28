@@ -7,7 +7,6 @@ def extract_filename(file):
 def get_size(file):
   return 1024
 
-# primit de la frontend
 def upload_req(file):
   filename = extract_filename(file)
   size = get_size(file)
@@ -44,8 +43,9 @@ def upload_storage(chunks, filename):
 
 # request lui tomi
 def list_storage(userID):
-  # din tabel local
-  return get_file_names()
+  filelist = get_file_list()
+
+  return filelist.keys()
 
 # write the file to a list of chunks
 # start chunk is requested and overwritten from the last file's offset
@@ -69,7 +69,7 @@ def split(start_offset, size, file):
 
   chunks.append(initial_chunk)
 
-  # append all other chunks 
+  # append all other chunks
 
   return chunks, chunk_IDs
 
