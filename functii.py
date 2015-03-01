@@ -31,13 +31,25 @@ def upload_req(file, filename, size):
 
 # primit de la frontend
 def download_req(filename):
-  chunks_start, chunks_end = get_chunks_offsets(fileID)
-  chunk_numbers = get_chunk_numbers(fileID)
+  chunk_start = get_file_start_offest(filename)
+  chunk_end = get_file_end_offset(filename)
+  chunk_numbers = get_file_chunks(filename)
+
+  print chunk_start, ' ', chunk_end, ' ', chunk_numbers
 
   # request la tomi pentru chunks
   chunks = [] #request la tomi
 
-  return merge_chunks(chunks, chunks_start, chunks_end)
+  final_file = []
+  if len(chunk_numbers) == 1:
+    final_file = chunks[0][chunk_start : chunk_end]
+  else:
+    final_file = chunks[0][chunk_start:]
+    for i in xrange(1, len(chunks_numbers) - 1):
+      final_file = final_file + chunks[i]
+    final_file = final_file + chunks[len(chunks_numbers) - 1][:chunk_end]
+
+  return final_file
 
 # trimis lui tomi
 def upload_storage(chunks, chunk_IDs):
@@ -107,13 +119,4 @@ def split(start_chunk, start_offset, size, file):
 def req_chunk(start_chunk):
   # returns initial_chunk data, start_offset
   # return array("B", "g"), 1
-  return t.test_CHUNKS[start_chunk], chunk_index[start_chunk] 
-
-# fills remaining empty space in a chunk with the beginning of the
-# given file
-# returns the offset where it finished filling the chunk.
-# this offset is not CHUNK_SIZE only when the entire file fits in
-# the remaining empty space in the given chunk
-# TODO implementation
-#def fill_initial_chunk(initial_chunk, file):
-#  return initial_chunk, CHUNK_SIZE
+  return t.test_CHUNKS[start_chunk], chunk_index[start_chunk]

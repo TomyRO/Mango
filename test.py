@@ -27,13 +27,14 @@ print t.test_CHUNKS
 
 chunks, chunkIDs = upload_req(file2, fn2, len(file2))
 t.test_CHUNKS = append_or_overwrite_to_storage(chunkIDs, chunks, t.test_CHUNKS)
-
 print t.test_CHUNKS
 
 chunks, chunkIDs = upload_req(file3, fn3, len(file3))
 t.test_CHUNKS = append_or_overwrite_to_storage(chunkIDs, chunks, t.test_CHUNKS)
-
 print t.test_CHUNKS
+
+download_req(fn3)
+
 #print d.chunk_index
 #print d.filelist
 
