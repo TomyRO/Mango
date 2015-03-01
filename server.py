@@ -9,6 +9,7 @@ from oauth2client.client import flow_from_clientsecrets
 from apiclient.discovery import build
 from apiclient import errors
 
+from functii import *
 
 CherryPyWSGIServer.ssl_certificate = "/etc/ssl/certs/ssl-cert-snakeoil.pem"
 CherryPyWSGIServer.ssl_private_key = "/etc/ssl/private/ssl-cert-snakeoil.key"
@@ -19,7 +20,10 @@ urls = (
   '/listfiles', 'listfiles',
   '/testing', 'testing',
   '/setup', 'setup',
-  '/(.*)', 'hello'
+  '/(.*)', 'hello',
+  '/allfiles', 'liststorage',
+  '/download', 'download',
+  '/upload', 'upload'
 )
 
 render = web.template.render('templates/')
@@ -61,6 +65,10 @@ class listfiles:
   def GET(self):
     client = dropbox.client.DropboxClient(session.access_token)
     return client.metadata('/') 
+
+class liststorage:
+  def GET(self):
+    return list_storage("testUser")
 
 class googleauth:
   def GET(self):
@@ -141,6 +149,29 @@ class testing:
 class setup:
   def GET(self):
     return render.index()
+
+class upload:
+  def GET(self):
+    return "Upload successful!"
+
+  def POST(self):
+    update_form = web.input(file={})
+
+    if 'file' in update_form:
+      file_name = update_form.file.filename
+      data = update_form.file.file.read()
+      upload_req(data, file_name, len(data))
+
+    return self.GET()
+
+class download:
+  def GET(self):
+    get_parameters = web.input(file={})
+    if 'file' in get_parameters:
+      file_name = get_parameters.file.filename
+      dld = download_req(file_name, False)
+      web.header("Content-Type", "application/octet-stream") # Set the Header
+      return dld 
 
 if __name__ == "__main__":
     app.run()
