@@ -32,6 +32,8 @@ public final class R {
         public static final int files_list=0x7f050005;
         public static final int image=0x7f050004;
         public static final int left_drawer=0x7f050003;
+        public static final int upload_button=0x7f050006;
+        public static final int upload_result=0x7f050007;
     }
     public static final class layout {
         public static final int drawer_list_item=0x7f030000;
@@ -39,6 +41,7 @@ public final class R {
         public static final int filelist_activity=0x7f030002;
         public static final int fragment_planet=0x7f030003;
         public static final int show_files_fragment=0x7f030004;
+        public static final int upload_fragment=0x7f030005;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

@@ -112,7 +112,7 @@ public class FilesActivity extends Activity {
         if (position == 0) {
         	fragment = new ListFilesFragment();
         } else {
-        	fragment = new Fragment();
+        	fragment = new UploadFragment();
         }
         Bundle args = new Bundle();
 //        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
