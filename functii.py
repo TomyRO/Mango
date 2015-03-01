@@ -1,5 +1,6 @@
 #!usr/bin/python
 from datastuff import *
+from array import array
 
 
 # file is a bytes array
@@ -23,6 +24,7 @@ def upload_req(file, filename, size):
   set_chunk_offset(chunk_IDs[len(chunk_IDs) - 1], size % CHUNK_SIZE)
 
   print chunks
+  print filelist
   #return upload_storage(chunks, filename)
 
 # primit de la frontend
@@ -64,7 +66,7 @@ def split(start_chunk, start_offset, size, file):
     initial_chunk, start_offset = req_chunk(start_chunk)
 
     if size < CHUNK_SIZE - start_offset:
-      end_offset = CHUNK_SIZE - start_offset - size + 1
+      end_offset = start_offset + size
     else:
       end_offset = CHUNK_SIZE
 
@@ -73,31 +75,34 @@ def split(start_chunk, start_offset, size, file):
     offset = CHUNK_SIZE - start_offset
     chunk_list.append(initial_chunk)
     chunk_IDs.append(chunk_number)
+    chunk_number = chunk_number + 1
 
   while size > 0:
-    if size < CHUNK_OFFSET:
+    if size < CHUNK_SIZE:
       new_chunk = file[offset:]
       # TODO: check if it needs a -1 or +1
       end_offset = size
+      chunk_IDs.append(chunk_number)
     else:
       new_chunk = file[offset : offset + CHUNK_SIZE]
       offset = offset + CHUNK_SIZE
       end_offset = CHUNK_SIZE
+      chunk_IDs.append(chunk_number)
+      chunk_number = chunk_number + 1
 
     size = max(0, size - CHUNK_SIZE)
-    chunk_number = chunk_number + 1
 
-    chunk_IDs.append(chunk_number)
     chunk_list.append(new_chunk)
 
-  return chunks, chunk_IDs, end_offset
+  return chunk_list, chunk_IDs, end_offset
 
 # makes request to storage backend for the chunk last chunk that is
 # available for writing
 # also returns the offset where we can start writing in that chunk
 # TODO implementation
-def req_chunk():
-  return "blablafiletext", 0
+def req_chunk(start_chunk):
+  # returns initial_chunk data, start_offset
+  return array("B", "blablabla"), 9
 
 # fills remaining empty space in a chunk with the beginning of the
 # given file
