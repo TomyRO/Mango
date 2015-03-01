@@ -39,7 +39,7 @@ session = web.session.Session(app, web.session.DiskStore('sessions'), initialize
 
 uploads = {}
 
-class hello:        
+class hello:
   def GET(self, name):
 
     data = web.input(code=None)
@@ -263,6 +263,13 @@ class testing:
     d.upload("00.dat", array)
     return str(d.download("00.dat"))
 
+class gtesting:
+  def GET(self):
+    array = ''.join(chr(x) for x in [0x50, 0x51, 0x52] * 10)
+    d = google_worker(session.credentials)
+    d.upload("00.dat", array)
+    return str(d.download("00.dat"))
+
 class setup:
   def GET(self):
     return render.index()
@@ -277,7 +284,7 @@ class upload:
     if 'file' in update_form:
       file_name = update_form.file.filename
       data = update_form.file.file.read()
-      uploads[file_name] = data 
+      uploads[file_name] = data
 
       #upload_req(data, file_name, len(data))
 
@@ -290,7 +297,7 @@ class download:
       file_name = get_parameters.file.filename
       dld = uploads[file_name]#download_req(file_name, False)
       web.header("Content-Type", "application/octet-stream") # Set the Header
-      return dld 
+      return dld
 
 if __name__ == "__main__":
     app.run()
