@@ -18,8 +18,11 @@ urls = (
   '/googleauthcallback', 'googleauthcallback',
   '/listfiles', 'listfiles',
   '/testing', 'testing',
+  '/setup', 'setup',
   '/(.*)', 'hello'
 )
+
+render = web.template.render('templates/')
 
 web.config.debug = False
 
@@ -134,6 +137,10 @@ class testing:
     d = dropbox_worker(session.access_token)
     d.upload("00.dat", array)
     return str(d.download("00.dat"))
+
+class setup:
+  def GET(self):
+    return render.index()
 
 if __name__ == "__main__":
     app.run()
