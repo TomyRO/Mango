@@ -3,8 +3,35 @@ from datastuff import *
 from array import array
 import testdata as t
 
+def getMaxChunks(space_id):
+  max_chunks = -1
+  if space_id == 'd':
+    #tomi dropbox
+    max_chunks = 1000
+  elif space_id == 'g':
+    #tomi google
+    max_chunks = 1000
+  return max_chunks
+
+def getUsedChunks(space_id):
+  used_chunks = -1
+  if space_id == 'd':
+    #tomi dropbox
+    used_chunks = 100
+
+  elif space_id == 'g':
+    #tomi google
+    used_chunks = 100
+  return used_chunks
+
 # file is a bytes array
 def upload_req(file, filename, size):
+  # first verify if enough space
+  d_available = getMaxChunks('d') - getUsedChunks('d')
+  g_available = getMaxChunks('g') - getUsedChunks('g')
+  if (d_available + g_available) * CHUNK_SIZE < size:
+    return "NOT_ENOUGH_SPACE"
+
   start_chunk, start_offset = get_last_used_chunk_and_offset()
 
   if start_offset == CHUNK_SIZE:
@@ -26,7 +53,7 @@ def upload_req(file, filename, size):
   return upload_storage(chunks, chunk_IDs)
 
 # primit de la frontend
-def download_req(filename):
+def download_req(filename, testFlag):
   chunk_start = get_file_start_offest(filename)
   chunk_end = get_file_end_offset(filename)
   
@@ -35,7 +62,7 @@ def download_req(filename):
   # print chunk_start, ' ', chunk_end, ' ', chunk_numbers
 
   # request la tomi pentru chunks
-  chunks = download_storage(chunk_numbers, True)
+  chunks = download_storage(chunk_numbers, testFlag)
   
   final_file = []
   if len(chunk_numbers) == 1:
@@ -64,6 +91,21 @@ def upload_storage(chunks, chunk_IDs):
   #files = generate_files(chunks)
   # call la tomi cu files
   #print "CHUNKS", chunks, chunk_IDs
+  spaces = ['d', 'g']
+  # bad code:
+  used_chunks = getUsedChunks('d') + getUsedChunks('g')
+  max_used_chunks_d = getMaxChunks('d')
+  max_used_chunks_g = getMaxChunks('g')
+
+  for chunk in chunks:
+    #TODO: trimis request de upload lui tomi
+    if used_chunks > max_used_chunks_d:
+      a = 1
+      #TODO: trimis request de upload google
+    else:
+      a = 1
+      #TODO: trimis request de upload dropbox
+    used_chunks = used_chunks + 1
   return chunks, chunk_IDs
 
 # request lui tomi

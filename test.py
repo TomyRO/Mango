@@ -35,9 +35,10 @@ print t.test_CHUNKS
 
 ###################
 # Download test
-dld1 = download_req("file1")
+# True for testing
+dld1 = download_req("file1", True)
 print dld1
-dld2 = download_req("file2")
+dld2 = download_req("file2", True)
 print dld2
-dld3 = download_req("file3")
+dld3 = download_req("file3", True)
 print dld3
