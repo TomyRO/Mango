@@ -33,12 +33,11 @@ chunks, chunkIDs = upload_req(file3, fn3, len(file3))
 t.test_CHUNKS = append_or_overwrite_to_storage(chunkIDs, chunks, t.test_CHUNKS)
 print t.test_CHUNKS
 
-download_req(fn3)
-
-#print d.chunk_index
-#print d.filelist
-
-#upload_req(array("B", "abcdefg"), "test-name", 7)
-#upload_req(array("B", "hij"), "test2", 3)
-
-#print list_storage("test-user")
+###################
+# Download test
+dld1 = download_req("file1")
+print dld1
+dld2 = download_req("file2")
+print dld2
+dld3 = download_req("file3")
+print dld3

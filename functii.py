@@ -23,23 +23,20 @@ def upload_req(file, filename, size):
   #last chunk
   set_chunk_offset(chunk_IDs[len(chunk_IDs) - 1], size % CHUNK_SIZE)
 
-  #print chunk_index
-  #print "current call chunks", chunks
-  #print filelist
-  #print "\n"
   return upload_storage(chunks, chunk_IDs)
 
 # primit de la frontend
 def download_req(filename):
   chunk_start = get_file_start_offest(filename)
   chunk_end = get_file_end_offset(filename)
-  chunk_numbers = get_file_chunks(filename)
+  
+  chunk_numbers = get_file_chunks(filename) # list of chunk numbers
 
-  print chunk_start, ' ', chunk_end, ' ', chunk_numbers
+  # print chunk_start, ' ', chunk_end, ' ', chunk_numbers
 
   # request la tomi pentru chunks
-  chunks = [] #request la tomi
-
+  chunks = download_storage(chunk_numbers, True)
+  
   final_file = []
   if len(chunk_numbers) == 1:
     final_file = chunks[0][chunk_start : chunk_end]
@@ -50,6 +47,17 @@ def download_req(filename):
     final_file = final_file + chunks[len(chunks_numbers) - 1][:chunk_end]
 
   return final_file
+
+def download_storage(chunk_numbers, testing):
+  #request la tomi
+  chunks = []
+  
+  #TODO remove when not testing
+  if testing:
+    for i in xrange(len(chunk_numbers)):
+      chunks.append(t.test_CHUNKS[chunk_numbers[i]]) 
+
+  return chunks
 
 # trimis lui tomi
 def upload_storage(chunks, chunk_IDs):
