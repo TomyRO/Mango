@@ -5,7 +5,7 @@ from collections import OrderedDict
 DEFAULT = 0
 
 # Size of a chunk in bytes
-CHUNK_SIZE = 8
+CHUNK_SIZE = 25
 
 # contine:
 #   - chunk number de forma 00, 01, etc
