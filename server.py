@@ -37,6 +37,8 @@ app_secret = "jibv7nuqzuhd5aj";
 
 session = web.session.Session(app, web.session.DiskStore('sessions'), initializer={})
 
+uploads = {}
+
 class hello:        
   def GET(self, name):
     
@@ -160,7 +162,9 @@ class upload:
     if 'file' in update_form:
       file_name = update_form.file.filename
       data = update_form.file.file.read()
-      upload_req(data, file_name, len(data))
+      uploads[file_name] = data 
+
+      #upload_req(data, file_name, len(data))
 
     return self.GET()
 
@@ -169,7 +173,7 @@ class download:
     get_parameters = web.input(file={})
     if 'file' in get_parameters:
       file_name = get_parameters.file.filename
-      dld = download_req(file_name, False)
+      dld = uploads[file_name]#download_req(file_name, False)
       web.header("Content-Type", "application/octet-stream") # Set the Header
       return dld 
 
