@@ -35,7 +35,7 @@ class hello:
     
     data = web.input(code=None)
 
-    flow = dropbox.client.DropboxOAuth2Flow(app_key, app_secret, "https://146.148.7.87:80/", session, "dd")
+    flow = dropbox.client.DropboxOAuth2Flow(app_key, app_secret, "https://mangocloud.me:80/", session, "dd")
 
     if not name: 
       name = 'World'
@@ -122,7 +122,7 @@ class dropbox_worker:
     self.client.put_file(filename, f)
 
   def download(self, filename):
-    f, metadata = client.get_file_and_metadata(filename)
+    f, metadata = self.client.get_file_and_metadata(filename)
     return f.read()
 
 class google_worker:
@@ -130,7 +130,7 @@ class google_worker:
 
 class testing:
   def GET(self):
-    array = [123,124,125,126] * 10
+    array = ''.join(chr(x) for x in [0x50, 0x51, 0x52] * 10) 
     d = dropbox_worker(session.access_token)
     d.upload("00.dat", array)
     return str(d.download("00.dat"))
